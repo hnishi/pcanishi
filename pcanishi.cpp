@@ -26,6 +26,8 @@ using namespace Eigen;
 
 
 vector<double> quaternion( vector<double> &vec_ref, vector<double> &vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+int transfer_quat( vector<double> &vec, vector<double> &transf );
+int rotate_quat( vector<double> &vec, vector<double> &rot_mat );
 
 
 /* ********************************************
@@ -44,6 +46,7 @@ int pcanishi(  Inp_nishi inp1 ){
    string pcaatom = inp1.read("PCAATOM") ;
    int stride = atoi(inp1.read("STRIDE").c_str());
    int startframe = atoi( inp1.read("STARTFRAME").c_str() ) - 1 ;
+   string superpbase = inp1.read("SUPERPBASE");   //v.1.1.0
 
    if(stride <= 0){
       return -1;
@@ -127,10 +130,21 @@ int pcanishi(  Inp_nishi inp1 ){
    cout<<"!!!!! cod_num = COD1"<<endl;
 
    vector<double> vec, vec_buf;
-   for(int i=start_sel*3;i<=end_sel*3+2;i++){
-      vec_buf.push_back(vec_ref[i]);
+   if( superpbase == "YES" ){
+      for(int i=0;i<start_sel*3;i++){
+        vec_buf.push_back(vec_ref[i]);
+      }
+      for(unsigned int i=end_sel*3+3;i<vec_ref.size();i++){
+        vec_buf.push_back(vec_ref[i]);
+      }
+   }
+   else{
+      for(int i=start_sel*3;i<=end_sel*3+2;i++){
+        vec_buf.push_back(vec_ref[i]);
+      }
    }
    //cout<<"!!!!!!! vec_buf.size() = "<<vec_buf.size()<<endl;
+   //cout<<"!!!!!!! vec_ref.size() = "<<vec_ref.size()<<endl;
    //cout<<"!!! vec_ref[0] = "<<vec_buf[0]<<", vec_ref[n] = "<<vec_buf[vec_buf.size() -1]<<endl;
 
 flag100:
@@ -138,14 +152,51 @@ flag100:
    //cout<<"!!!!! tra1->cordx.size() = "<<tra1->cordx.size()<<endl;
    for(unsigned int n=startframe;n<tra1->total_step;n++){
       vec_tar.clear();
-      for(int i=start_sel;i<=end_sel;i++){
-         vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
-         vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
-         vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
+      if( superpbase == "YES" ){
+         for(int i=0;i<start_sel;i++){
+            vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
+         }
+         for(unsigned int i=end_sel+1;i<tra1->total_sel;i++){
+            vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
+         }
+         //cout<<"!!!!!!! vec_tar.size() = "<<vec_tar.size()<<endl;
+         //cout<<"!!!!!!! total_sel*3 = "<<tra1->total_sel*3<<endl;
+         vector<double> rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+	 vec_tar.clear();
+         for(int i=start_sel;i<=end_sel;i++){
+            vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
+         }
+         vector<double> transf;  // transfer target
+         transf.push_back( rot_mat[12] );
+         transf.push_back( rot_mat[13] );
+         transf.push_back( rot_mat[14] );
+         transfer_quat( vec_tar, transf );
+
+         /*transf.clear();  //no need to transfer reference because do not calculate RMSD
+         transf.push_back( rot_mat[ 9] );
+         transf.push_back( rot_mat[10] );
+         transf.push_back( rot_mat[11] );
+         transfer_quat( pdb_ref->coox, pdb_ref->cooy, pdb_ref->cooz, transf );
+*/
+         rotate_quat( vec_tar, rot_mat );  // rotate target
+       
+      }
+      else {
+         for(int i=start_sel;i<=end_sel;i++){
+            vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
+            vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
+         }
+         ///cout<<n<<" rmsd before = "<<rmsd2(vec_tar,vec_buf)<<endl;
+         quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
       }
       //cout<<"!!! vec_tar[0] = "<<vec_tar[0]<<", vec_tar[n] = "<<vec_tar[vec_tar.size() -1]<<endl;
-      ///cout<<n<<" rmsd before = "<<rmsd2(vec_tar,vec_buf)<<endl;
-      quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
       //cout<<n<<" rmsd after = "<<rmsd2(vec_tar,vec_buf)<<endl;
       //cout<<"!!! vec_ref[0] = "<<vec_buf[0]<<", vec_ref[n] = "<<vec_buf[vec_buf.size() -1]<<endl;
       //cout<<"!!! vec_tar[0] = "<<vec_tar[0]<<", vec_tar[n] = "<<vec_tar[vec_tar.size() -1]<<endl;
@@ -181,7 +232,7 @@ flag100:
  *     
  * */
    //cout<<" 3-1  create vector Q \n";
-   unsigned int dim_Q = vec_buf.size();
+   unsigned int dim_Q = vec_tar.size();
    cout<<"dimensionality of Q (components per one structure) is "<<dim_Q<<endl;
    cout<<"cycle_frame = "<<cycle_frame<<endl;
    unsigned int frame = vec.size() / dim_Q;
