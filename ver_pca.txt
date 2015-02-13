@@ -1,5 +1,7 @@
-pcanishi 1.1.0
+pcanishi 1.1.1
 
+2015.02.13: 1.1.1
+  output sentences were  modified
 2015.02.11: 1.1.0
   for superposition by base area (outof CHR-H3)
   test: with v1.0.0

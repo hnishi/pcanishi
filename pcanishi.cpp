@@ -148,6 +148,9 @@ int pcanishi(  Inp_nishi inp1 ){
    //cout<<"!!! vec_ref[0] = "<<vec_buf[0]<<", vec_ref[n] = "<<vec_buf[vec_buf.size() -1]<<endl;
 
 flag100:
+   cout<<"TOTAL FRAME = "<<tra1->total_step<<endl;
+   cout<<"TOTAL ATOM = "<<tra1->pdb1->total_atom<<endl;
+   cout<<"TOTAL SELECTED ATOM = "<<tra1->total_sel<<endl;
    vector<double> vec_tar;
    //cout<<"!!!!! tra1->cordx.size() = "<<tra1->cordx.size()<<endl;
    for(unsigned int n=startframe;n<tra1->total_step;n++){
