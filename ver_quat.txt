@@ -1,0 +1,12 @@
+quatnishi 1.0.0
+
+
+
+***  rmsd test  ***
+(1)RMSDMODE pdb
+O.K. 
+The result agreed with the one of another program (rmsd.py by Imada-san).
+
+(2)RMSDMODE cod
+mainchain O.K.
+The result agreed with the one of my old program (quat_ab10_mainchain).

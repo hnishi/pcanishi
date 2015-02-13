@@ -1,0 +1,62 @@
+# pcanishi input-parameter file
+
+# :::::::::   pca   :::::::::::::::::::::::::::
+# input
+REFPDBNAME  ../samp/for_rmsd/traj/crystal_1st.pdb
+COD1   ../samp/for_rmsd/traj/md_small.crd
+COD2   ../samp/md_npt_10.cod
+#COD2   ../samp/for_rmsd/traj/md_small.crd
+COD3   ../samp/npt_02.cod
+#COD3   ../samp/for_rmsd/traj/md_small.crd
+#COD4
+
+# output
+OUTEIGEN out_eigen.txt
+C1C2OUT c1c2c3c4str.dat  # NO available 
+
+# trajectory settings
+STRIDE 1   # mabiki
+STARTFRAME  1
+
+# selection
+PCAATOM  heavy ca  # all: all atoms in pdb, protein: atoms without solvent (resn WAT, CIP and CIM), heavy: heavy atoms, ca: CA (atom name) atoms in mainchain, mainchain: CA, N, C and O atoms in mainchain 
+STARTCHAIN B  # space; white space " " can be set using keyword "space" 
+STARTRES  210  #1  # 210
+ENDCHAIN B  # space; white space " " can be set using keyword "space" 
+ENDRES 222  #234  # 222
+SUPERPBASE  YES
+
+
+# :::::::::   rmsd mode   :::::::::::::::::::::::::::::::::::::::
+#RMSDMODE pdb # pdb  # pdb or cod
+#RMSDMODE cod # pdb  # pdb or cod
+
+# :::::::::   common settings   ::::::::::::::::::::::::::::::::::
+# input 
+#REFPDBNAME ../samp/for_rmsd/pdbtopdb/crystal_1st_prot.pdb
+#REFPDBNAME ../samp/for_rmsd/traj/crystal_1st.pdb
+
+# selection
+#RMSDATOM mainchain  # all: all atoms in pdb, heavy: heavy atoms, ca: CA (atom name) atoms in mainchain, mainchain: CA, N, C and O atoms in mainchain 
+#STARTCHAIN B  # space; white space " " can be set using keyword "space" 
+#STARTRES 210  #1  # 210
+#ENDCHAIN B  # space; white space " " can be set using keyword "space" 
+#ENDRES 222  #234  # 222
+#INVERSERMSD YES NO  # YES or NO
+
+# :::::::::   pdb-mode   :::::::::::::::::::::::::::::::::::::::::
+# input 
+#PDBNAME ../samp/for_rmsd/pdbtopdb/final_md_small_prot.pdb
+# output
+#SUPERPDB out_super.pdb  
+
+# :::::::::   cod-mode   :::::::::::::::::::::::::::::::::::::::::
+# input 
+#CODNAME ../samp/for_rmsd/traj/md_small.crd
+# output
+#RMSDFILE out_rmsd.dat
+
+# trajectory settings
+#STRIDE 1   # mabiki
+
+

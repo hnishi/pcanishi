@@ -1,0 +1,16 @@
+pcanishi 1.1.0
+
+2015.02.11: 1.1.0
+  for superposition by base area (outof CHR-H3)
+  test: with v1.0.0
+  SUPERPBASE = NO  ->  o.k.
+    same result (log)
+  SUPERPBASE = YES ->  o.k.
+    I saw the mapping of c1c2c3c4str.dat 
+    and confirm the same clusteres were distributed as old version 
+2015.02.10: 1.0.0
+  add information of PC3 and PC4 into C1C2OUT file
+
+
+
+

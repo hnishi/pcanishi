@@ -1,0 +1,17 @@
+#rsync -auv /Users/nishigami/Dropbox/baka/* /Users/nishigami/hnishi/baka/keep/ 
+#rsync -auv /Users/nishigami/hnishi/baka/ /Users/nishigami/Dropbox/baka/
+
+cp math_nishi.cpp keep/
+cp ver_quat.txt keep/
+cp pcanishi.cpp keep/
+cp quatnishi.cpp keep/
+cp inpnishi.cpp keep/
+cp pdbnishi.cpp keep/
+cp centnishi.cpp keep/
+cp tranishi.cpp keep/
+cp nlib.h keep/
+cp math_nishi.h keep/
+cp main.cpp keep/
+cp Makefile keep/
+cp calc.cpp keep/
+cp ver_nlib.txt keep/
