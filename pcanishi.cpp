@@ -148,6 +148,7 @@ int pcanishi(  Inp_nishi inp1 ){
    //cout<<"!!!!!!! vec_ref.size() = "<<vec_ref.size()<<endl;
    //cout<<"!!! vec_ref[0] = "<<vec_buf[0]<<", vec_ref[n] = "<<vec_buf[vec_buf.size() -1]<<endl;
 
+   string flag_rotmat = "notyet"; vector<double> rot_mat_1st;  //v.1.1.2
 flag100:
    cout<<"TOTAL FRAME = "<<tra1->total_step<<endl;
    cout<<"TOTAL ATOM = "<<tra1->pdb1->total_atom<<endl;
@@ -170,6 +171,10 @@ flag100:
          //cout<<"!!!!!!! vec_tar.size() = "<<vec_tar.size()<<endl;
          //cout<<"!!!!!!! total_sel*3 = "<<tra1->total_sel*3<<endl;
          rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+	 if(flag_rotmat == "notyet"){
+	    rot_mat_1st = rot_mat;
+	    flag_rotmat = "alreadydone";
+	 }
 	 vec_tar.clear();
          for(int i=start_sel;i<=end_sel;i++){
             vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
@@ -193,6 +198,10 @@ flag100:
          }
          ///cout<<n<<" rmsd before = "<<rmsd2(vec_tar,vec_buf)<<endl;
          rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+	 if(flag_rotmat == "notyet"){
+	    rot_mat_1st = rot_mat;
+	    flag_rotmat = "alreadydone";
+	 }
       }
       //cout<<"!!! vec_tar[0] = "<<vec_tar[0]<<", vec_tar[n] = "<<vec_tar[vec_tar.size() -1]<<endl;
       //cout<<n<<" rmsd after = "<<rmsd2(vec_tar,vec_buf)<<endl;
@@ -223,16 +232,22 @@ flag100:
    }
    //unsigned int dim_0 = end_sel - start_sel +1;
 
-         transf.clear();  //no need to transfer reference because do not calculate RMSD
-         transf.push_back( rot_mat[ 9] );
-         transf.push_back( rot_mat[10] );
-         transf.push_back( rot_mat[11] );
+/*   cout<<"rot_mat[9] = "<<rot_mat[9]<<endl;
+   cout<<"rot_mat[10] = "<<rot_mat[10]<<endl;
+   cout<<"rot_mat[11] = "<<rot_mat[11]<<endl;
+   cout<<"rot_mat_1st[9] = "<<rot_mat[9]<<endl;
+   cout<<"rot_mat_1st[10] = "<<rot_mat[10]<<endl;
+   cout<<"rot_mat_1st[11] = "<<rot_mat[11]<<endl;*/
+   transf.clear();  //no need to transfer reference because do not calculate RMSD
+         transf.push_back( rot_mat_1st[ 9] );
+         transf.push_back( rot_mat_1st[10] );
+         transf.push_back( rot_mat_1st[11] );
          transfer_quat( vec_ref, transf );
 	 for(int i=start_sel*3;i<=end_sel*3+2;i++){
 	    vec.push_back(vec_ref[i]);
 	 }
-	 cout<<"!!! vec.size() = "<<vec.size()<<endl;
-	 cout<<"!!! vec_ref.size() = "<<vec_ref.size()<<endl;
+	 //cout<<"!!! vec.size() = "<<vec.size()<<endl;
+	 //cout<<"!!! vec_ref.size()/3 = "<<vec_ref.size()/3<<endl;
 
    cout<<"\n--- PCA CALCULATION --- \n";
    //cout<<endl<<"REPORT> (3) PCA calculation starts \n";

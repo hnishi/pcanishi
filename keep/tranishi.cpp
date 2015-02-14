@@ -77,15 +77,15 @@ void tra_nishi::constructor( const char *codname, const char *pdbname, int n, st
 		total_sel = vec.size() /3 ;
 		//cout<<"!!!! rtrn_c = "<<rtrn_c<<endl;
         }
-	cout<<"!!!! total_sel = "<<total_sel<<endl;
+	//cout<<"!!!! total_sel = "<<total_sel<<endl;
         //total_step = loopnum.size();
         total_step = rmsd.size();
-	cout<<"!!!! total_step = "<<total_step<<endl;
         int loopdist=loopnum[1]-loopnum[0];
         //cout<<"loopdist= "<<loopdist<<endl;
         while( loopnum[total_step-1] != ( loopnum[total_step-2] + loopdist ) ){
                 total_step--;   // check whether total_step is wrong or correct
         }
+	//cout<<"!!!! total_step = "<<total_step<<endl;
         ifs.close();
 }
 tra_nishi::tra_nishi(const char *codname,const char *pdbname){//default constructor

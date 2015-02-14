@@ -7,6 +7,7 @@ int quatnishi(Inp_nishi);
 int pcanishi(Inp_nishi);
 
 int main(int argc, char *argv[]){
+  cout<<"Version info. pcanishi v.1.1.2 \n";
 // ##################### ARGUMENT HANDLING ##########################
 // argv[1]: input parameter file
   if( argv[1]==NULL ){
@@ -24,10 +25,11 @@ int main(int argc, char *argv[]){
    //quatnishi(inp1);
 
 // DO pcanishi
-   pcanishi( inp1 );
+   int rtrn = pcanishi( inp1 );
+   if(rtrn==0)cout<<"\nend of pcanishi\n";
 
 
 // END
-	cout<<"\nit took "<<(float)clock()/CLOCKS_PER_SEC<<" sec of CPU to execute this program"<<endl;
+	cout<<"\n\nit took "<<(float)clock()/CLOCKS_PER_SEC<<" sec of CPU to execute this program"<<endl;
 	return 0;
 }

@@ -24,7 +24,7 @@ STARTCHAIN B  # space; white space " " can be set using keyword "space"
 STARTRES  210  #1  # 210
 ENDCHAIN B  # space; white space " " can be set using keyword "space" 
 ENDRES 222  #234  # 222
-SUPERPBASE  YES
+SUPERPBASE  NO YES
 
 
 # :::::::::   rmsd mode   :::::::::::::::::::::::::::::::::::::::
