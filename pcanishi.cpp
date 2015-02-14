@@ -232,13 +232,14 @@ flag100:
    }
    //unsigned int dim_0 = end_sel - start_sel +1;
 
+   cout<<"\n--- READING REFERENCE STRUCTURE --- \n";
 /*   cout<<"rot_mat[9] = "<<rot_mat[9]<<endl;
    cout<<"rot_mat[10] = "<<rot_mat[10]<<endl;
    cout<<"rot_mat[11] = "<<rot_mat[11]<<endl;
    cout<<"rot_mat_1st[9] = "<<rot_mat[9]<<endl;
    cout<<"rot_mat_1st[10] = "<<rot_mat[10]<<endl;
    cout<<"rot_mat_1st[11] = "<<rot_mat[11]<<endl;*/
-   transf.clear();  //no need to transfer reference because do not calculate RMSD
+   transf.clear();  //no need to transfer referencer because do not calculate RMSD
          transf.push_back( rot_mat_1st[ 9] );
          transf.push_back( rot_mat_1st[10] );
          transf.push_back( rot_mat_1st[11] );
@@ -248,10 +249,11 @@ flag100:
 	 }
 	 //cout<<"!!! vec.size() = "<<vec.size()<<endl;
 	 //cout<<"!!! vec_ref.size()/3 = "<<vec_ref.size()/3<<endl;
+   cout<<"The final Data of the structure set is of the Reference. \n"<<endl;
 
    cout<<"\n--- PCA CALCULATION --- \n";
    //cout<<endl<<"REPORT> (3) PCA calculation starts \n";
-/* ********
+/* ********\\
  * 3-1   create vector Q = (q1x,q1y,q1z,q2x,...,q20z) 
  *     
  * */
