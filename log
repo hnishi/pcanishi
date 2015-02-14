@@ -1,3 +1,4 @@
+Version info. pcanishi v.1.1.1 
 Your input-parameter file: prm_pca.txt
 
 --- TRAJECTORY INFORMATION --- 
@@ -8,9 +9,7 @@ STRIDE <- 1
 STARTFRAME <- 1
 SUPERPBASE <- YES
 loading
-../samp/for_rmsd/traj/md_small.crd        ../samp/for_rmsd/traj/crystal_1st.pdb
-!!!! total_sel = 1799
-!!!! total_step = 77
+../samp/for_rmsd/traj/md_small.crd and ../samp/for_rmsd/traj/crystal_1st.pdb
 TOTAL FRAME = 77
 TOTAL ATOM = 20156
 TOTAL SELECTED ATOM = 1799
@@ -20,13 +19,11 @@ STARTCHAIN <- B
 ENDCHAIN <- B
 STARTRES <- 210
 ENDRES <- 222
-intra_start = 3167
-intra_end = 3386
-ATOM   3167  O   CYSSB 209       3.718  17.143  11.874 16.00 -0.57           O
-ATOM   3168  N   ALA B 210       2.720  17.685  13.807 14.01 -0.42           N
-...
-ATOM   3387  O   TYR B 222       6.157  15.013  14.786 16.00 -0.57           O
-ATOM   3388  N   TRP B 223       7.560  14.771  13.040 14.01 -0.42           N
+unselected: ATOM   3167  O   CYSSB 209       3.718  17.143  11.874 16.00 -0.57           O
+  selected: ATOM   3168  N   ALA B 210       2.720  17.685  13.807 14.01 -0.42           N
+  selected: ...
+  selected: ATOM   3387  O   TYR B 222       6.157  15.013  14.786 16.00 -0.57           O
+unselected: ATOM   3388  N   TRP B 223       7.560  14.771  13.040 14.01 -0.42           N
 
 --- ATOM SELECTION --- 
 ATOM   3168  N   ALA B 210       2.720  17.685  13.807 14.01 -0.42           N
@@ -142,7 +139,6 @@ ATOM   3382  CE2 TYR B 222       9.585  10.449  17.914 12.01 -0.23           C
 ATOM   3384  CD2 TYR B 222       8.577  11.211  17.297 12.01 -0.19           C
 ATOM   3386  C   TYR B 222       7.185  14.550  14.297 12.01  0.60           C
 ATOM   3387  O   TYR B 222       6.157  15.013  14.786 16.00 -0.57           O
-!!!! start_sel and end_sel = 1606 and 1717
 Atoms in region between STARTRES and ENDRES = 220
 Num. of atoms selected for PCA calculation = 112 in reference
 Rejected atoms are as follows (Selected: heavy)
@@ -152,22 +148,31 @@ element H (Hydrogens) = 108
 residue name WAT (Water molecules) = 0
 residue name CIM (minus ions) = 0
 residue name CIP (plus ions) = 0
-!!!!! cod_num = COD1
-!!!!! cod_num = COD2
+
+--- LOADING STRUCTURE ENSEMBLES --- 
+Reading COD1
+TOTAL FRAME = 77
+TOTAL ATOM = 20156
+TOTAL SELECTED ATOM = 1799
+
+Reading COD2
 COD2 <- ../samp/md_npt_10.cod
-!!!! total_sel = 1799
-!!!! total_step = 1000
-!!!!! cod_num = COD3
+TOTAL FRAME = 1000
+TOTAL ATOM = 20156
+TOTAL SELECTED ATOM = 1799
+
+Reading COD3
 COD3 <- ../samp/npt_02.cod
-!!!! total_sel = 1799
-!!!! total_step = 977
-!!!!! cod_num = COD4
+TOTAL FRAME = 977
+TOTAL ATOM = 20156
+TOTAL SELECTED ATOM = 1799
+
+Reading COD4
 cannot find the parameter (COD4) in parameter.txt
 Section of reading trajectories was ended normaly
 
 --- PCA CALCULATION --- 
 dimensionality of Q (components per one structure) is 336
-cycle_frame = 112
 Thr number of structures is 2054
  3-2  create variance-covariance matrix 
  3-3  calculate eigen-value 
@@ -183,12 +188,12 @@ OUTEIGEN <- out_eigen.txt
 ouput out_eigen.txt
  3-5  calculate components along principle axis 
 C1C2OUT <- c1c2c3c4str.dat
-output c1vsc2.dat (2-D graph) 
+output c1c2c3c4str.dat (for graph) 
 
-REPORT> (6) calculate contribution ratio of c1 and c2 
+REPORT> (6) calculate contribution ratio 
 contribution ratio (PC1) = 0.568619
 contribution ratio (PC1 + PC2) = 0.680783
 contribution ratio (PC1 + PC2 + PC3) = 0.737356
 contribution ratio (PC1 + PC2 + PC3 + PC4) = 0.764611
 
-it took 51.702 sec of CPU to execute this program
+it took 50.343 sec of CPU to execute this program

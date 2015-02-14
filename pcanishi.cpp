@@ -51,7 +51,7 @@ int pcanishi(  Inp_nishi inp1 ){
    if(stride <= 0){
       return -1;
    }
-   cout<<"loading\n"<<codname<<"        "<<pdbname<<endl;
+   cout<<"loading\n"<<codname<<" and "<<pdbname<<endl;
 	tra_nishi* tra1;
 	tra1 = new tra_nishi(codname.c_str(), pdbname.c_str(), stride, pcaatom);
 	cout<<"TOTAL FRAME = "<<tra1->total_step<<endl;
@@ -70,15 +70,15 @@ int pcanishi(  Inp_nishi inp1 ){
    int intra_start, intra_end;
 	intra_start = tra1->pdb1->search_n( startchain , startres );
 	intra_end = tra1->pdb1->search_n_end( endchain , endres );
-	cout<<"intra_start = "<<intra_start<<endl;
-	cout<<"intra_end = "<<intra_end<<endl;
+	//cout<<"intra_start = "<<intra_start<<endl;
+	//cout<<"intra_end = "<<intra_end<<endl;
 
 
-	tra1->pdb1->disp_line(intra_start-1);
-	tra1->pdb1->disp_line(intra_start);
-	cout<<"...\n";
-        tra1->pdb1->disp_line(intra_end);
-        tra1->pdb1->disp_line(intra_end+1);
+	cout<<"unselected: ";tra1->pdb1->disp_line(intra_start-1);
+	cout<<"  selected: ";tra1->pdb1->disp_line(intra_start);
+	cout<<"  selected: ";cout<<"...\n";
+        cout<<"  selected: ";tra1->pdb1->disp_line(intra_end);
+        cout<<"unselected: ";tra1->pdb1->disp_line(intra_end+1);
 
         //tra1->pdb1->write_pdb("zzz.pdb"); cout<<"output pdb file (zzz.pdb)\n";
 
@@ -113,8 +113,8 @@ int pcanishi(  Inp_nishi inp1 ){
 	 if(rtrn_sel==0)count++;
       }
       
-      int cycle_frame = end_sel - start_sel + 1;
-      cout<<"!!!! start_sel and end_sel = "<<start_sel<<" and "<<end_sel<<endl;
+      //int cycle_frame = end_sel - start_sel + 1;
+      //cout<<"!!!! start_sel and end_sel = "<<start_sel<<" and "<<end_sel<<endl;
       cout<<"Atoms in region between STARTRES and ENDRES = "<<intra_end - intra_start + 1<<endl;
       cout<<"Num. of atoms selected for PCA calculation = "<<end_sel - start_sel +1<<" in reference"<<endl;
       cout<<"Rejected atoms are as follows (Selected: "<<pcaatom<<")\n";
@@ -127,7 +127,8 @@ int pcanishi(  Inp_nishi inp1 ){
    
    //vec.clear();
    int cod_num_i=2;
-   cout<<"!!!!! cod_num = COD1"<<endl;
+   cout<<"\n--- LOADING STRUCTURE ENSEMBLES --- \n";
+   cout<<"Reading COD1"<<endl;
 
    vector<double> vec, vec_buf;
    if( superpbase == "YES" ){
@@ -151,7 +152,7 @@ flag100:
    cout<<"TOTAL FRAME = "<<tra1->total_step<<endl;
    cout<<"TOTAL ATOM = "<<tra1->pdb1->total_atom<<endl;
    cout<<"TOTAL SELECTED ATOM = "<<tra1->total_sel<<endl;
-   vector<double> vec_tar;
+   vector<double> vec_tar, rot_mat, transf;
    //cout<<"!!!!! tra1->cordx.size() = "<<tra1->cordx.size()<<endl;
    for(unsigned int n=startframe;n<tra1->total_step;n++){
       vec_tar.clear();
@@ -168,25 +169,19 @@ flag100:
          }
          //cout<<"!!!!!!! vec_tar.size() = "<<vec_tar.size()<<endl;
          //cout<<"!!!!!!! total_sel*3 = "<<tra1->total_sel*3<<endl;
-         vector<double> rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+         rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
 	 vec_tar.clear();
          for(int i=start_sel;i<=end_sel;i++){
             vec_tar.push_back(tra1->cordx[n*tra1->total_sel+i]);
             vec_tar.push_back(tra1->cordy[n*tra1->total_sel+i]);
             vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
          }
-         vector<double> transf;  // transfer target
+         transf.clear();  // transfer target
          transf.push_back( rot_mat[12] );
          transf.push_back( rot_mat[13] );
          transf.push_back( rot_mat[14] );
          transfer_quat( vec_tar, transf );
 
-         /*transf.clear();  //no need to transfer reference because do not calculate RMSD
-         transf.push_back( rot_mat[ 9] );
-         transf.push_back( rot_mat[10] );
-         transf.push_back( rot_mat[11] );
-         transfer_quat( pdb_ref->coox, pdb_ref->cooy, pdb_ref->cooz, transf );
-*/
          rotate_quat( vec_tar, rot_mat );  // rotate target
        
       }
@@ -197,7 +192,7 @@ flag100:
             vec_tar.push_back(tra1->cordz[n*tra1->total_sel+i]);
          }
          ///cout<<n<<" rmsd before = "<<rmsd2(vec_tar,vec_buf)<<endl;
-         quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
+         rot_mat = quaternion( vec_buf, vec_tar );  // give two vectors as pointer, so please notice the changes of these vectors in this function will remain out of it.
       }
       //cout<<"!!! vec_tar[0] = "<<vec_tar[0]<<", vec_tar[n] = "<<vec_tar[vec_tar.size() -1]<<endl;
       //cout<<n<<" rmsd after = "<<rmsd2(vec_tar,vec_buf)<<endl;
@@ -215,7 +210,7 @@ flag100:
    string cod_num;  char buf[32];
    sprintf(buf,"COD%d",cod_num_i);  //itoa()
    cod_num = buf;
-   cout<<"!!!!! cod_num = "<<cod_num<<endl;
+   cout<<"\nReading "<<cod_num<<endl;
    cod_num_i++;
    codname = inp1.read(cod_num);
    if( codname == "nothing" ){
@@ -228,6 +223,17 @@ flag100:
    }
    //unsigned int dim_0 = end_sel - start_sel +1;
 
+         transf.clear();  //no need to transfer reference because do not calculate RMSD
+         transf.push_back( rot_mat[ 9] );
+         transf.push_back( rot_mat[10] );
+         transf.push_back( rot_mat[11] );
+         transfer_quat( vec_ref, transf );
+	 for(int i=start_sel*3;i<=end_sel*3+2;i++){
+	    vec.push_back(vec_ref[i]);
+	 }
+	 cout<<"!!! vec.size() = "<<vec.size()<<endl;
+	 cout<<"!!! vec_ref.size() = "<<vec_ref.size()<<endl;
+
    cout<<"\n--- PCA CALCULATION --- \n";
    //cout<<endl<<"REPORT> (3) PCA calculation starts \n";
 /* ********
@@ -237,7 +243,7 @@ flag100:
    //cout<<" 3-1  create vector Q \n";
    unsigned int dim_Q = vec_tar.size();
    cout<<"dimensionality of Q (components per one structure) is "<<dim_Q<<endl;
-   cout<<"cycle_frame = "<<cycle_frame<<endl;
+   //cout<<"cycle_frame = "<<cycle_frame<<endl; //cycle_frame should be dim_Q/3
    unsigned int frame = vec.size() / dim_Q;
    cout<<"Thr number of structures is "<<frame<<endl;
 
@@ -366,7 +372,7 @@ flag100:
         		ofs<<c1[n]<<"   "<<c2[n]<<"   "<<c3[n]<<"   "<<c4[n]<<"   "<<n+1<<endl;
 		}
 		ofs.close();
-   		cout<<"output c1vsc2.dat (2-D graph) \n";
+   		cout<<"output "<<c1c2out<<" (for graph) \n";
    	}
 	else{
 		cout<<"do not output C1C2OUT \n";
@@ -376,7 +382,7 @@ flag100:
 /* (6) calculate contribution ratio of c1 and c2
  *     
  * */
-   cout<<endl<<"REPORT> (6) calculate contribution ratio of c1 and c2 \n";
+   cout<<endl<<"REPORT> (6) calculate contribution ratio \n";
    double sum_lambda = 0;
    for(unsigned int i=0;i<dim_Q;i++){
       sum_lambda += es.eigenvalues()[i];
