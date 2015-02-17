@@ -3,7 +3,6 @@
 #include<Eigen/Dense>  // Eigen/Core, Geometry, LU, Cholesky, SVD, QR and Eigenvalues
 //#include"inpnishi.h"
 
-//#include<sstream>
 using namespace Eigen;
 
 // user define
