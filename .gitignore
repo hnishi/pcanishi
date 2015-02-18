@@ -1,0 +1,22 @@
+# for cpp 
+
+*.pdb*
+*.swp
+*.swx
+
+#ignore *.a or *.o
+#*.[ao]  #not work in mobaxterm
+*.o
+./keep/
+#keep/*
+
+a.out
+
+*.exe
+
+*.out*
+
+*.log*
+
+*.dat*
+
