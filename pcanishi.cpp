@@ -393,7 +393,7 @@ flag100:
 	else{
 		cout<<"do not output C1C2OUT \n";
 	}
-	delete[] c1; delete[] c2; 
+	//delete[] c1; delete[] c2; 
 	delete[] c3; delete[] c4; 
 /* (6) calculate contribution ratio of c1 and c2
  *     
@@ -412,6 +412,125 @@ flag100:
    cntr_rt = (es.eigenvalues()[dim_Q - 1] + es.eigenvalues()[dim_Q - 2] + es.eigenvalues()[dim_Q - 3] + es.eigenvalues()[dim_Q - 4]) / sum_lambda;
    cout<<"contribution ratio (PC1 + PC2 + PC3 + PC4) = "<<cntr_rt<<endl;
 
+
+/* (7) PMF calculation
+ *
+ * */
+   cout<<endl<<"REPORT> (7) PMF calculation \n";
+   string pmfcalculation  = inp1.read("PMFCALCULATION");
+   if( pmfcalculation == "YES"){
+
+
+   double length_bin = atof(inp1.read("BINSIZE").c_str());
+   //int num_bin = 1000;
+   //double length_bin = BIN_DE; 
+   int emax, emin;
+   emax =  18; emin =  -18;
+   //emax = (int)max_c + 3*length_bin;
+   //emin = (int)min_c - 3*length_bin; cout<<"emax, emin = "<<emax<<", "<<emin<<endl;
+   cout<<"length_bin = "<<length_bin<<endl;
+   int num_bin = ( emax - emin ) / length_bin + 1; cout<<"num_bin = "<<num_bin<<endl;
+   double pmf[num_bin][num_bin];
+   for(int i=0;i<num_bin;i++){  //initialize array
+      for(int j=0;j<num_bin;j++){
+         pmf[j][i] = 0;
+      }
+   }
+   int count_pmf = 0;
+   for(unsigned int n=0;n<frame;n++){ //count
+      for(int i=0;i<num_bin;i++){
+         for(int j=0;j<num_bin;j++){
+            if(c1[n] > emin + length_bin * j 
+ 	    && c1[n] <= emin + length_bin * (j + 1) 
+	    && c2[n] > emin + length_bin * i
+	    && c2[n] <= emin + length_bin * (i + 1)     ){
+	       pmf[j][i] ++ ;
+	       count_pmf ++ ;
+	       //goto NEXT_PMF;
+	    }
+         }
+      }
+
+//NEXT_PMF:
+   //continue;
+   }
+   cout<<"count_pmf / frame = "<<count_pmf<<" / "<<frame<<endl;
+   if( count_pmf != (int)frame )cout<<"WARNING: count_pmf != frame; "<<count_pmf<<" != "<<frame<<endl;
+   double min_pmf = 999999, max_pmf = -999999; 
+   for(int i=0;i<num_bin;i++){ //normalization
+      for(int j=0;j<num_bin;j++){
+         pmf[j][i] = pmf[j][i] / frame;
+         if( pmf[j][i] <= min_pmf ){
+            min_pmf = pmf[j][i];
+         }
+         if( pmf[j][i] >= max_pmf ){
+            max_pmf = pmf[j][i];
+         }
+      }
+   }
+   cout<<"Maximum Probability = "<<max_pmf<<endl;
+   cout<<"Minimum Probability = "<<min_pmf<<endl;
+
+   //double const_boltz = 1.380658e-23, pmf_temp = 300;
+   min_pmf = 999999, max_pmf = -999999; 
+   int min_pmf_n[2]; double min_pmf_c[2];
+   min_pmf_n[0] = 0; min_pmf_n[1] = 0;
+   int max_pmf_n[2]; double max_pmf_c[2];
+   max_pmf_n[0] = 0; max_pmf_n[1] = 0;
+   for(int i=0;i<num_bin;i++){ //PMF calculation
+      for(int j=0;j<num_bin;j++){
+         if( pmf[j][i] == 0 ){
+	    //pmf[j][i] = 0;
+	    continue;
+	 }
+         pmf[j][i] = -1 * BOLTZMAN_CONST * TEMPERATURE * log( pmf[j][i] );
+         if( pmf[j][i] < min_pmf ){
+            min_pmf = pmf[j][i];
+            min_pmf_n[0] = j; min_pmf_n[1] = i;
+         }
+         if( pmf[j][i] > max_pmf ){
+            max_pmf = pmf[j][i];
+            max_pmf_n[0] = j; max_pmf_n[1] = i;
+            cout<<"DEBUG> max_pmf = "<<max_pmf<<", max_pmf_n[0], max_pmf_n[1] = "<<max_pmf_n[0]<<", "<<max_pmf_n[1]<<endl;
+         }
+      }
+   }
+   min_pmf_c[0] = emin + min_pmf_n[0] * length_bin + length_bin / 2;
+   min_pmf_c[1] = emin + min_pmf_n[1] * length_bin + length_bin / 2;
+   max_pmf_c[0] = emin + max_pmf_n[0] * length_bin + length_bin / 2;
+   max_pmf_c[1] = emin + max_pmf_n[1] * length_bin + length_bin / 2;
+   
+   cout<<"Maximum PMF = "<<max_pmf<<" (J/mol)"<<endl;
+   cout<<"Minimum PMF = "<<min_pmf<<" (J/mol)"<<endl;
+   cout<<"(c1, c2) of Maximum PMF = ("<<max_pmf_c[0]<<", "<<max_pmf_c[1]<<")\n"; 
+   cout<<"(c1, c2) of Minimum PMF = ("<<min_pmf_c[0]<<", "<<min_pmf_c[1]<<")\n"; 
+   
+/*   ofstream ofs_pmf;
+   ofs_pmf.open("out_pmf.dat");
+   for(int i=0;i<num_bin;i++){
+      for(int j=0;j<num_bin;j++){
+         ofs_pmf<<min_c + length_bin * j<<"   "<<min_c + length_bin * i<<"   "<<pmf[j][i]<<endl;
+         //ofs_pmf<<format("%8.3f%8.3f%8.3f \n")  %(min_c + length_bin * j), %(min_c + length_bin * i), %pmf[j][i]; //not work
+      }
+   }
+   ofs_pmf.close();*/
+   FILE *fout;
+   if((fout = fopen("out_pmf.dat","w")) == NULL ){
+      printf("cannot open output file: %s\n","out_pmf.dat");
+      return 1;
+   }
+   for(int i=0;i<num_bin;i++){
+      for(int j=0;j<num_bin;j++){
+         if( pmf[j][i] == 0 ){
+         fprintf(fout,"%12.3f%12.3f%12.3f \n", emin + length_bin * j + length_bin / 2, emin + length_bin * i + length_bin / 2, 0.0 );}else{
+         fprintf(fout,"%12.3f%12.3f%12.3f \n", emin + length_bin * j + length_bin / 2, emin + length_bin * i + length_bin / 2, (pmf[j][i] - max_pmf) / JOULE_CALORIE /1000 );
+         }
+      }
+   }
+   fclose( fout );
+   cout<<"output out_pmf.dat"<<endl;
+   }
+//end:
 
 // END
         return 0;
