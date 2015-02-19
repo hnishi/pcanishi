@@ -7,8 +7,6 @@ using namespace Eigen;
 
 // user define
 #define TEMPERATURE 300.0
-#define BIN_DE 5 
-#define BIN_EMIN1 -200
 
 // constant values
 #define GAS_CONST 8.31451  // gas constant, R ( joule/mol*k )
@@ -420,16 +418,20 @@ flag100:
    string pmfcalculation  = inp1.read("PMFCALCULATION");
    if( pmfcalculation == "YES"){
 
-
    double length_bin = atof(inp1.read("BINSIZE").c_str());
+   float emin = atof(inp1.read("EMINIMUM").c_str());
+   int num_bin = atoi(inp1.read("NUMBIN").c_str());
    //int num_bin = 1000;
-   //double length_bin = BIN_DE; 
-   int emax, emin;
-   emax =  18; emin =  -18;
+   //int emax, emin;
+   //emax =  18; emin =  -18;
    //emax = (int)max_c + 3*length_bin;
    //emin = (int)min_c - 3*length_bin; cout<<"emax, emin = "<<emax<<", "<<emin<<endl;
-   cout<<"length_bin = "<<length_bin<<endl;
-   int num_bin = ( emax - emin ) / length_bin + 1; cout<<"num_bin = "<<num_bin<<endl;
+   //cout<<"length_bin = "<<length_bin<<endl;
+   //int num_bin = ( emax - emin ) / length_bin + 1; cout<<"num_bin = "<<num_bin<<endl;
+   
+   cout<<"Range: "<<emin<<" to "<<emin+length_bin*num_bin<<endl;
+   cout<<"Num of Partitions = NUMBIN*NUMBIN = "<<num_bin*num_bin<<endl;
+
    double pmf[num_bin][num_bin];
    for(int i=0;i<num_bin;i++){  //initialize array
       for(int j=0;j<num_bin;j++){
@@ -480,7 +482,7 @@ flag100:
    for(int i=0;i<num_bin;i++){ //PMF calculation
       for(int j=0;j<num_bin;j++){
          if( pmf[j][i] == 0 ){
-	    //pmf[j][i] = 0;
+	    //pmf[j][i] = 100;  
 	    continue;
 	 }
          pmf[j][i] = -1 * BOLTZMAN_CONST * TEMPERATURE * log( pmf[j][i] );
@@ -491,7 +493,7 @@ flag100:
          if( pmf[j][i] > max_pmf ){
             max_pmf = pmf[j][i];
             max_pmf_n[0] = j; max_pmf_n[1] = i;
-            cout<<"DEBUG> max_pmf = "<<max_pmf<<", max_pmf_n[0], max_pmf_n[1] = "<<max_pmf_n[0]<<", "<<max_pmf_n[1]<<endl;
+            //cout<<"DEBUG> max_pmf = "<<max_pmf<<", max_pmf_n[0], max_pmf_n[1] = "<<max_pmf_n[0]<<", "<<max_pmf_n[1]<<endl;
          }
       }
    }
@@ -515,8 +517,10 @@ flag100:
    }
    ofs_pmf.close();*/
    FILE *fout;
-   if((fout = fopen("out_pmf.dat","w")) == NULL ){
-      printf("cannot open output file: %s\n","out_pmf.dat");
+   
+   string outpmf = inp1.read("OUTPMF");
+   if((fout = fopen( outpmf.c_str(),"w" )) == NULL ){
+      printf("cannot open output file: %s\n", outpmf.c_str() );
       return 1;
    }
    for(int i=0;i<num_bin;i++){
@@ -528,7 +532,7 @@ flag100:
       }
    }
    fclose( fout );
-   cout<<"output out_pmf.dat"<<endl;
+   cout<<"output "<<outpmf<<endl;
    }
 //end:
 

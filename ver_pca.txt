@@ -1,5 +1,7 @@
-pcanishi 1.1.2
+pcanishi 1.2.0
 
+2015.02.14: 1.2.0
+  implement PMF calculation
 2015.02.14: 1.1.2
   add crystal structure into ensemble subject to PCA calculation
   final structure of all (C1C2OUT) is crystal
