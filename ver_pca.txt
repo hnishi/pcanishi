@@ -1,5 +1,12 @@
-pcanishi 1.2.0
+pcanishi 1.2.2
 
+2015.02.20: 1.2.2
+  change log
+2015.02.20: 1.2.1
+  probability = 0 then omd = 100
+  minimum pmf = 0
+  change plot_out_pmf.plt
+  change format of out_pmf.dat (add vacant line for plotting ny gnuplot)
 2015.02.14: 1.2.0
   implement PMF calculation
 2015.02.14: 1.1.2
