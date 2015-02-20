@@ -532,6 +532,7 @@ flag100:
          fprintf(fout,"%12.3f%12.3f%12.3f \n", emin + length_bin * j + length_bin / 2, emin + length_bin * i + length_bin / 2, (pmf[j][i] - min_pmf) / JOULE_CALORIE /1000 );
          }
       }
+      fprintf(fout,"\n");
    }
    fclose( fout );
    cout<<"output "<<outpmf<<endl;

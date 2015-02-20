@@ -4,12 +4,10 @@
 set xlabel "c1"
 set ylabel "c2"
 
-set cbrange[0:10]
-
 set pm3d 
-#set contour
+set contour
 set view 0,0
-#set dgrid3d 30,30
+set dgrid3d 30,30
 #set hidden3d
 unset surface
 set palette rgbformulae 33,13,10
