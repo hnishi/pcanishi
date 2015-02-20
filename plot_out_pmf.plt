@@ -4,8 +4,8 @@
 set xlabel "c1"
 set ylabel "c2"
 
-set cbrange[0:10]
-set zrange[0:10]
+set cbrange[0:3 ]
+set zrange[0:3 ]
 
 set pm3d 
 #set contour
