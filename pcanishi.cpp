@@ -5,9 +5,6 @@
 
 using namespace Eigen;
 
-// user define
-#define TEMPERATURE 300.0
-
 // constant values
 #define GAS_CONST 8.31451  // gas constant, R ( joule/mol*k )
 //#define BOLTZMAN_CONST 1.380658e-23  // Boltzman constant, kb ( joule/k )
@@ -420,6 +417,7 @@ flag100:
 
    double length_bin = atof(inp1.read("BINSIZE").c_str());
    float emin = atof(inp1.read("EMINIMUM").c_str());
+   float temperature = atof(inp1.read("TEMPERATURE").c_str());
    int num_bin = atoi(inp1.read("NUMBIN").c_str());
    //int num_bin = 1000;
    //int emax, emin;
@@ -485,7 +483,7 @@ flag100:
 	    //pmf[j][i] = 100;  
 	    continue;
 	 }
-         pmf[j][i] = -1 * BOLTZMAN_CONST * TEMPERATURE * log( pmf[j][i] );
+         pmf[j][i] = -1 * BOLTZMAN_CONST * temperature * log( pmf[j][i] );
          if( pmf[j][i] < min_pmf ){
             min_pmf = pmf[j][i];
             min_pmf_n[0] = j; min_pmf_n[1] = i;
