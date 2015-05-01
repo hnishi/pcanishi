@@ -1,8 +1,4 @@
 #include"nlib.h"
-//#include<nlib.h>
-//#include<vector>
-//#include<string>
-
 
 //#define SCAN_FORMAT "%s%d%s%s%s%d%f%f%f%f%f%s" // no missing
 //#define WRITE_FORMAT_1 "%-6s%5d%5s %-4s%s%4d%12.3f%8.3f%8.3f%6.2f%6.2f%12s\n"
@@ -44,6 +40,7 @@ pdb_nishi::pdb_nishi(){ //for error
 	exit(1);
 }
 pdb_nishi::pdb_nishi(const char *pdbname){
+	pdb_name = pdbname;  //public variable of class pdb_nishi
 	char buf1[100];
 	FILE *fin;
 
@@ -98,16 +95,56 @@ pdb_nishi::pdb_nishi(const char *pdbname){
                 sscanf(buf2, "%f", &bfoccu);
                 strncpy(buf2, &buf1[60], 6); buf2[6] = '\0';
                 sscanf(buf2, "%f", &bftemf);
-                if( strlen(bfatmn)==4 ){
-		//strncpy(bfelem, &buf1[12], 1);
+
+                //cout<<"rtrn_elem = "<<strncpy(buf2, &buf1[76], 3)<<endl; buf2[3] = '\0';  //could not see what return-value
+		string str_buf = buf1;  //v1.1.0
+		//cout<<str_buf<<", size = "<<str_buf.size()<<endl;
+		//cout<<"size of buf1 = "<<sizeof(buf1)<<endl;
+		//cout<<"buf1[77] = "<<buf1[77]<<endl;
+                if( str_buf.size() < 74 ){  //bfelem[0] = ' ';
+		  if( strcmp( bfresn,"CIP" ) == 0 ){
+		    strcpy( bfelem, "NA" );
+		  }
+		  else if( strcmp( bfresn,"CIM" ) == 0 ){
+		    strcpy( bfelem, "CL" );
+		  }
+		  else if( strcmp( bfatmn,"FE" ) == 0 ){
+		    strcpy( bfelem, "FE" );
+		  }
+		  else if( strcmp( bfatmn,"MG" ) == 0 ){
+		    strcpy( bfelem, "MG" );
+		  }
+		  else if( strcmp( bfatmn,"CU" ) == 0 ){
+		    strcpy( bfelem, "CU" );
+		  }
+		  else if( strcmp( bfatmn,"AG" ) == 0 ){
+		    strcpy( bfelem, "AG" );
+		  }
+		  else if( strcmp( bfatmn,"ZN" ) == 0 ){
+		    strcpy( bfelem, "ZN" );
+		  }
+		  else if( strlen(bfatmn)==4 ){  //stable expression for elemnt
+                    strncpy(buf2, &buf1[12], 1); buf2[1]='\0';
+		    sscanf(buf2, "%s", bfelem);
+		  }
+                  else{
+		    strncpy(buf2, &buf1[13], 1); buf2[1]='\0';
+		    sscanf(buf2, "%s", bfelem);
+		  }
+		}
+		else{ 
+                  strncpy(buf2, &buf1[76], 3); buf2[3] = '\0';
+		  buf2[3] = '\0';
+                  sscanf(buf2, "%s", bfelem);
+                }
+		/*if( strlen(bfatmn)==4 ){  //stable expression for elemnt
                 strncpy(buf2, &buf1[12], 1); buf2[1]='\0';
 		sscanf(buf2, "%s", bfelem);
 		}
                 else{
-                //strncpy(bfelem, &buf1[13], 1);
 		strncpy(buf2, &buf1[13], 1); buf2[1]='\0';
 		sscanf(buf2, "%s", bfelem);
-		}
+		}*/
 		//cout<<bfanum<<" chai: "<<bfchai<<endl;
                 //cout<<bfanum<<" reco: "<<bfreco<<endl;
 		/*printf("%-6s%5d%5s %-4s%s%4d%12.3f%8.3f%8.3f%6.2f%6.2f%12s\n",
@@ -218,6 +255,8 @@ int pdb_nishi::write_pdb(const char* filename, char mode){
       cerr<<"in pdb_nishi::write_pdb, failed to read mode \n";
       exit(1);
    }
+
+   fprintf(fout,"REMARK  original pdb is %s \n",pdb_name.c_str() );
 	char bfch;
 	for(unsigned int j=0;j<anum.size();j++){
 		strcpy(bfreco,reco[j].c_str());
@@ -393,3 +432,4 @@ int pdb_nishi::center_r(){
 
 	return 0;
 }
+

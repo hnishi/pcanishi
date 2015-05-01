@@ -5,6 +5,8 @@
 
 void tra_nishi::constructor( const char *codname, const char *pdbname, int n, string atomsel )
 {
+   cod_name = codname;
+   pdb_name = pdbname;
 	atom_sel = atomsel ;
 	ifstream ifs( codname, ios::in | ios::binary);//open file, codname
 
@@ -84,6 +86,7 @@ void tra_nishi::constructor( const char *codname, const char *pdbname, int n, st
         //cout<<"loopdist= "<<loopdist<<endl;
         while( loopnum[total_step-1] != ( loopnum[total_step-2] + loopdist ) ){
                 total_step--;   // check whether total_step is wrong or correct
+		cout<<"WARNING: total_step was decreased because the final loop-number of a trajectory was not correctly read\n";
         }
 	//cout<<"!!!! total_step = "<<total_step<<endl;
         ifs.close();
@@ -116,6 +119,7 @@ int tra_nishi::disp_line(int n){//display one step data at internal num. of n
 
 
 int tra_nishi::write_step(const char* filename,int n){//output pdb at n step
+   n = n-1;
 	FILE *fout;
         if((fout = fopen(filename,"w")) == NULL ){//error handling
                 printf("cannot open output file: %s\n",filename);
@@ -125,7 +129,9 @@ int tra_nishi::write_step(const char* filename,int n){//output pdb at n step
       printf("cannot write_step because (step num.) %i >= (total_step) %i \n",n,total_step);
       exit(1);
    }
-
+   fprintf(fout,"REMARK   this file was output by tra_nishi::write_step at frame %i/%i\n", n+1,total_step);
+   fprintf(fout,"REMARK   original crd file is %s\n", cod_name.c_str() );
+   fprintf(fout,"REMARK   original pdb file is %s\n", pdb_name.c_str() );
         //int bfanum,bfrnum;
         //float bfcoox,bfcooy,bfcooz,bfoccu,bftemf;
         //char bfreco[6],bfatmn[6],bfresn[5],bfchai[2],bfelem[5];
@@ -220,7 +226,9 @@ int tra_nishi::write_cod(const char* filename,int stride){//output trajectory in
         fclose(fout);
         return 0;
 }
-
+int tra_nishi::write_cod(const char* filename){
+  return write_cod(filename, 1);
+}
 
 int tra_nishi::fix_step(const char *filename, int n,float fxcell,float fycell,float fzcell){//not yet implemented
 	
@@ -409,4 +417,25 @@ int select_atom( pdb_nishi &pdb1, double x, double y, double z, vector<double> &
 }
 int select_atom( pdb_nishi &pdb1, vector<double> &vec, string &atomsel, int i ){
    return select_atom( pdb1, pdb1.coox[i], pdb1.cooy[i], pdb1.cooz[i], vec, atomsel, i );
+}
+
+int search_sel( pdb_nishi &pdb1, string chai, int resn, string atmn, string atomsel){
+  int total_sel = 0, intra_num = -1, check1=0;
+  vector<double> vec;
+  for(unsigned int w=0; w < pdb1.total_atom; w++){
+    int rtrn = select_atom( pdb1, vec, atomsel, w );
+    if( rtrn == 0 ){
+      //cout<<pdb1.chai[w]<<" "<<chai<<" "<<pdb1.rnum[w]<<" "<<resn<<" "<<pdb1.atmn[w]<<" "<<atmn<<endl;
+      if( pdb1.chai[w] == chai && pdb1.rnum[w] == resn && pdb1.atmn[w] == atmn ){
+        intra_num = total_sel;
+        check1++;
+      }
+      total_sel++; 
+    }
+  }
+  if(check1 > 1){
+    cout<<"WARNING in tranishi.cpp: search_sel() detected more than 1 selected atom"<<endl; 
+  }
+  //cout<<"DEBUG: total_sel = "<<total_sel<<endl;
+  return intra_num;
 }

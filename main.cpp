@@ -7,7 +7,7 @@ int quatnishi(Inp_nishi);
 int pcanishi(Inp_nishi);
 
 int main(int argc, char *argv[]){
-  cout<<"Version info. pcanishi v1.2.3 \n";
+  cout<<"Version info. pcanishi v1.2.4 \n";
 // ##################### ARGUMENT HANDLING ##########################
 // argv[1]: input parameter file
   if( argv[1]==NULL ){
